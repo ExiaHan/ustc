@@ -6,5 +6,5 @@ iptables -F
 iptables -X
 iptables -Z
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT 
-iptables -A INPUT -p icmp --icmp-type 0 -j ACCEPT
-iptables -A INPUT -m state --state INVALID,new -j ACCEPT 
+#iptables -A INPUT -p icmp --icmp-type 0 -j ACCEPT
+iptables -A INPUT -m state --state INVALID,NEW -j DROP
